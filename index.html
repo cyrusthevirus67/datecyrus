@@ -596,20 +596,24 @@
       </div>
     </div>
 
-    <form id="app-form">
+    <form id="app-form" action="https://formsubmit.co/ajax/cyruspaul987@gmail.com" method="POST">
+      <input type="hidden" name="_subject" value="New Girlfriend Application Submitted!">
+      <input type="hidden" name="_template" value="table">
+      <input type="hidden" name="_captcha" value="false">
+      <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
       <div class="section">
         <p class="eyebrow">Part 3 &#8226; Compatibility Check</p>
         <h2>Tap what applies to you</h2>
         <div class="nb-card chip-grid">
-          <label><input type="checkbox" name="compat"> Faith matters to me too</label>
-          <label><input type="checkbox" name="compat"> Fine with surprise guitar sets</label>
-          <label><input type="checkbox" name="compat"> Want kids someday</label>
-          <label><input type="checkbox" name="compat"> High tolerance for goofiness</label>
-          <label><input type="checkbox" name="compat"> Love (or am open to) travel</label>
-          <label><input type="checkbox" name="compat"> Patient with people learning as they go</label>
-          <label><input type="checkbox" name="compat"> Close with my own family</label>
-          <label><input type="checkbox" name="compat"> Read, or wish I read more</label>
-          <label><input type="checkbox" name="compat"> Unbothered by boogers</label>
+          <label><input type="checkbox" name="compat" value="Faith matters to me too"> Faith matters to me too</label>
+          <label><input type="checkbox" name="compat" value="Fine with surprise guitar sets"> Fine with surprise guitar sets</label>
+          <label><input type="checkbox" name="compat" value="Want kids someday"> Want kids someday</label>
+          <label><input type="checkbox" name="compat" value="High tolerance for goofiness"> High tolerance for goofiness</label>
+          <label><input type="checkbox" name="compat" value="Love (or am open to) travel"> Love (or am open to) travel</label>
+          <label><input type="checkbox" name="compat" value="Patient with people learning as they go"> Patient with people learning as they go</label>
+          <label><input type="checkbox" name="compat" value="Close with my own family"> Close with my own family</label>
+          <label><input type="checkbox" name="compat" value="Read, or wish I read more"> Read, or wish I read more</label>
+          <label><input type="checkbox" name="compat" value="Unbothered by boogers"> Unbothered by boogers</label>
         </div>
       </div>
 
@@ -617,15 +621,15 @@
         <div class="sliders">
           <div class="slider-field">
             <div class="top"><span>Goofiness tolerance</span><span id="dadjoke-val">7 / 10</span></div>
-            <input type="range" min="1" max="10" value="7" id="dadjoke" oninput="document.getElementById('dadjoke-val').textContent=this.value+' / 10'">
+            <input type="range" min="1" max="10" value="7" id="dadjoke" name="goofiness_tolerance" oninput="document.getElementById('dadjoke-val').textContent=this.value+' / 10'">
           </div>
           <div class="slider-field">
             <div class="top"><span>Adventure appetite</span><span id="adventure-val">6 / 10</span></div>
-            <input type="range" min="1" max="10" value="6" id="adventure" oninput="document.getElementById('adventure-val').textContent=this.value+' / 10'">
+            <input type="range" min="1" max="10" value="6" id="adventure" name="adventure_appetite" oninput="document.getElementById('adventure-val').textContent=this.value+' / 10'">
           </div>
           <div class="slider-field">
             <div class="top"><span>Excitement for a future family</span><span id="family-val">8 / 10</span></div>
-            <input type="range" min="1" max="10" value="8" id="family" oninput="document.getElementById('family-val').textContent=this.value+' / 10'">
+            <input type="range" min="1" max="10" value="8" id="family" name="family_excitement" oninput="document.getElementById('family-val').textContent=this.value+' / 10'">
           </div>
         </div>
       </div>
@@ -737,7 +741,21 @@
       }
 
       hint.classList.remove('error');
-      hint.textContent = 'Application received.';
+      hint.textContent = 'Sending your application…';
+      var submitBtn = form.querySelector('.btn-submit');
+      submitBtn.disabled = true;
+
+      fetch(form.action, {
+        method: 'POST',
+        body: new FormData(form),
+        headers: { 'Accept': 'application/json' }
+      }).then(function(res){
+        hint.textContent = res.ok ? 'Application received — Cyrus will see it.' : 'Sent, but delivery could not be confirmed.';
+      }).catch(function(){
+        hint.textContent = 'Could not reach the server — your answers were not sent. Check your connection and try again.';
+      }).finally(function(){
+        submitBtn.disabled = false;
+      });
 
       youInitial.textContent = name.charAt(0).toUpperCase();
       matchLine.innerHTML = 'You and <strong>' + escapeHtml(sig) + '</strong> have both applied. That’s how this works, apparently.';

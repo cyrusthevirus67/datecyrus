@@ -751,7 +751,17 @@
         body: new FormData(form),
         headers: { 'Accept': 'application/json' }
       }).then(function(res){
-        hint.textContent = res.ok ? 'Application received — Cyrus will see it.' : 'Sent, but delivery could not be confirmed.';
+        return res.json().catch(function(){ return null; }).then(function(data){
+          if(data && data.success === 'true'){
+            hint.textContent = 'Application received \u2014 Cyrus will see it.';
+          } else if(data && data.message && /activ/i.test(data.message)){
+            hint.textContent = 'Almost there \u2014 this inbox needs a one-time activation click before delivery works. Ask Cyrus to check his email.';
+          } else if(res.ok){
+            hint.textContent = 'Sent, but delivery could not be confirmed.';
+          } else {
+            hint.textContent = 'Delivery failed \u2014 please try again in a moment.';
+          }
+        });
       }).catch(function(){
         hint.textContent = 'Could not reach the server — your answers were not sent. Check your connection and try again.';
       }).finally(function(){

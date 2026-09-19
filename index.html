@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cyrus's Girlfriend Application</title>
+<meta name="description" content="A tongue-in-cheek job application for the position of Cyrus's girlfriend.">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+  html, body{ margin:0; padding:0; }
+  body{ background:#1B1023; }
+  :root{
+    --ground:#1B1023;
+    --card:#FFF7EC;
+    --card-dim:#F4ECDD;
+    --ink:#1B1023;
+    --ink-soft:#6B5B73;
+    --primary:#FF4D6D;
+    --primary-ink:#FFFFFF;
+    --secondary:#FFC93C;
+    --good:#00C48C;
+    --border:#1B1023;
+  }
+
+  *{ box-sizing:border-box; }
+
+  .page{
+    background:
+      radial-gradient(circle at 12% 4%, color-mix(in srgb, var(--primary) 22%, transparent), transparent 40%),
+      radial-gradient(circle at 88% 18%, color-mix(in srgb, var(--secondary) 18%, transparent), transparent 38%),
+      var(--ground);
+    color:var(--ink);
+    font-family:"Plus Jakarta Sans", -apple-system, "Helvetica Neue", Arial, sans-serif;
+    min-height:100vh;
+    padding:clamp(18px, 5vw, 48px) 16px 72px;
+    display:flex;
+    justify-content:center;
+    line-height:1.55;
+  }
+
+  .app{ width:100%; max-width:460px; display:flex; flex-direction:column; gap:22px; }
+
+  .topbar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 4px;
+  }
+  .brand{
+    font-family:"Lilita One", "Arial Black", sans-serif;
+    font-size:20px;
+    line-height:1.15;
+    color:var(--card);
+    letter-spacing:0.005em;
+    flex:1;
+    min-width:0;
+    padding-right:10px;
+  }
+  .live-pill{
+    font-family:"JetBrains Mono", ui-monospace, monospace;
+    font-size:10.5px;
+    font-weight:700;
+    letter-spacing:0.04em;
+    text-transform:uppercase;
+    color:var(--ground);
+    background:var(--good);
+    border:2.5px solid var(--border);
+    border-radius:999px;
+    padding:5px 11px;
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    flex-shrink:0;
+  }
+  .live-pill::before{
+    content:"";
+    width:6px; height:6px;
+    border-radius:50%;
+    background:var(--border);
+  }
+
+  .nb-card{
+    background:var(--card);
+    border:3px solid var(--border);
+    border-radius:26px;
+    box-shadow:7px 7px 0 var(--border);
+  }
+
+  /* Hero */
+  .hero-card{ overflow:hidden; position:relative; }
+  @media (prefers-reduced-motion: no-preference){
+    .hero-card{ animation:pop-in .45s cubic-bezier(.2,1.3,.4,1) both; }
+  }
+  @keyframes pop-in{
+    from{ opacity:0; transform:scale(0.96) translateY(6px); }
+    to{ opacity:1; transform:scale(1) translateY(0); }
+  }
+  .hero-photo-wrap{ position:relative; }
+  .hero-photo-wrap img{
+    display:block;
+    width:100%;
+    aspect-ratio:4/5;
+    object-fit:cover;
+    object-position:50% 38%;
+  }
+  .photo-dots{
+    position:absolute;
+    top:12px; left:12px; right:12px;
+    display:flex;
+    gap:4px;
+    z-index:2;
+  }
+  .photo-dots span{
+    flex:1;
+    height:4px;
+    border-radius:999px;
+    background:rgba(255,247,236,0.35);
+  }
+  .photo-dots span:first-child{ background:var(--card); }
+  .hero-scrim{
+    position:absolute; inset:0;
+    background:linear-gradient(to top, rgba(27,16,35,0.88) 0%, rgba(27,16,35,0.35) 38%, transparent 62%);
+  }
+  .verified{
+    position:absolute;
+    top:14px; right:14px;
+    background:var(--secondary);
+    border:2.5px solid var(--border);
+    border-radius:999px;
+    padding:6px 12px 6px 10px;
+    font-family:"JetBrains Mono", ui-monospace, monospace;
+    font-size:10px;
+    font-weight:700;
+    letter-spacing:0.03em;
+    text-transform:uppercase;
+    transform:rotate(-4deg);
+    display:flex; align-items:center; gap:5px;
+    box-shadow:3px 3px 0 var(--border);
+  }
+  .hero-text{
+    position:absolute; left:0; right:0; bottom:0;
+    padding:18px 20px 20px;
+    color:var(--card);
+  }
+  .hero-name{
+    font-family:"Lilita One", "Arial Black", sans-serif;
+    font-size:clamp(26px, 8vw, 32px);
+    line-height:1.05;
+    text-wrap:balance;
+    margin:0 0 8px;
+  }
+  .hero-chips{ display:flex; flex-wrap:wrap; gap:7px; }
+  .hero-chips span{
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:0.02em;
+    color:var(--ground);
+    background:var(--card);
+    border:2px solid var(--border);
+    border-radius:999px;
+    padding:4px 10px;
+  }
+
+  .action-row{
+    display:flex;
+    gap:12px;
+    padding:16px;
+    position:relative;
+  }
+  .btn{
+    flex:1;
+    font-family:"Plus Jakarta Sans", sans-serif;
+    font-weight:800;
+    font-size:14.5px;
+    letter-spacing:0.01em;
+    text-transform:uppercase;
+    border:3px solid var(--border);
+    border-radius:999px;
+    padding:13px 10px;
+    cursor:pointer;
+    box-shadow:5px 5px 0 var(--border);
+    transition:transform .1s ease, box-shadow .1s ease;
+  }
+  .btn:active{ transform:translate(3px,3px); box-shadow:2px 2px 0 var(--border); }
+  .btn-nope{ background:var(--card); color:var(--ink); }
+  .btn-apply{ background:var(--primary); color:var(--primary-ink); }
+  @media (prefers-reduced-motion: no-preference){
+    .btn-nope.shake{ animation:shake .3s ease; }
+  }
+  @keyframes shake{
+    0%,100%{ transform:translateX(0); }
+    25%{ transform:translateX(-5px) rotate(-2deg); }
+    75%{ transform:translateX(5px) rotate(2deg); }
+  }
+  .nope-toast{
+    position:absolute;
+    bottom:-6px; left:50%;
+    transform:translate(-50%, 100%);
+    background:var(--ground);
+    color:var(--card);
+    font-size:11.5px;
+    font-weight:600;
+    padding:8px 14px;
+    border-radius:12px;
+    white-space:nowrap;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .2s ease, transform .2s ease;
+  }
+  .nope-toast.show{ opacity:1; transform:translate(-50%, 8px); }
+
+  /* Trust bar */
+  .trust{
+    text-align:center;
+    padding:2px 10px;
+  }
+  .trust .label{
+    font-family:"JetBrains Mono", ui-monospace, monospace;
+    font-size:10px;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:color-mix(in srgb, var(--card) 55%, transparent);
+    margin:0 0 8px;
+  }
+  .trust .items{
+    font-size:12.5px;
+    color:color-mix(in srgb, var(--card) 80%, transparent);
+    font-weight:600;
+    line-height:1.7;
+  }
+
+  /* Section headers */
+  .eyebrow{
+    font-family:"JetBrains Mono", ui-monospace, monospace;
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--secondary);
+    margin:0 0 6px;
+    padding:0 4px;
+  }
+  h2{
+    font-family:"Lilita One", "Arial Black", sans-serif;
+    font-weight:400;
+    font-size:23px;
+    color:var(--card);
+    margin:0 0 14px;
+    padding:0 4px;
+    text-wrap:balance;
+  }
+  .section{ display:flex; flex-direction:column; }
+
+  /* Prompt cards */
+  .prompts{ display:flex; flex-direction:column; gap:14px; }
+  .prompt{ padding:18px 20px; }
+  .prompt .tag{
+    display:inline-block;
+    font-size:11px;
+    font-weight:800;
+    letter-spacing:0.03em;
+    text-transform:uppercase;
+    color:var(--ground);
+    background:var(--secondary);
+    border:2px solid var(--border);
+    border-radius:8px;
+    padding:4px 9px;
+    margin:0 0 10px;
+    transform:rotate(-1.2deg);
+  }
+  .prompt p{ margin:0; font-size:15px; }
+
+  /* Gallery */
+  .gallery{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:14px;
+  }
+  .gallery figure{
+    margin:0;
+    position:relative;
+    border-radius:20px;
+    overflow:hidden;
+    border:3px solid var(--border);
+    box-shadow:5px 5px 0 var(--border);
+    transition:transform .18s ease, box-shadow .18s ease;
+  }
+  .gallery figure:hover{
+    transform:translateY(-4px);
+    box-shadow:7px 9px 0 var(--border);
+  }
+  .gallery img{
+    display:block;
+    width:100%;
+    aspect-ratio:4/5;
+    object-fit:cover;
+  }
+  .gallery figcaption{
+    position:absolute; left:8px; right:8px; bottom:8px;
+    background:var(--card);
+    border:2px solid var(--border);
+    border-radius:10px;
+    padding:6px 9px;
+    font-size:11px;
+    font-weight:700;
+    line-height:1.25;
+    color:var(--ink);
+  }
+
+  /* Checklist chips */
+  .chip-grid{
+    display:flex;
+    flex-wrap:wrap;
+    gap:9px;
+    padding:18px;
+  }
+  .chip-grid label{
+    position:relative;
+    font-size:12.5px;
+    font-weight:700;
+    color:var(--ink);
+    background:var(--card-dim);
+    border:2.5px solid var(--border);
+    border-radius:999px;
+    padding:8px 14px;
+    cursor:pointer;
+    user-select:none;
+    transition:background .12s ease, color .12s ease, transform .1s ease;
+  }
+  .chip-grid label:has(input:checked){
+    background:var(--primary);
+    color:var(--primary-ink);
+    transform:translateY(-2px);
+  }
+  .chip-grid input{
+    position:absolute;
+    opacity:0;
+    width:1px; height:1px;
+  }
+  .chip-grid input:focus-visible + span,
+  .chip-grid label:has(input:focus-visible){
+    outline:2.5px solid var(--good);
+    outline-offset:2px;
+  }
+
+  /* Sliders */
+  .sliders{ display:flex; flex-direction:column; gap:20px; padding:4px 20px 20px; }
+  .slider-field .top{
+    display:flex; justify-content:space-between; align-items:baseline;
+    margin-bottom:8px; font-size:13.5px; font-weight:700;
+  }
+  .slider-field .top span:last-child{
+    font-family:"JetBrains Mono", ui-monospace, monospace;
+    font-variant-numeric:tabular-nums;
+    color:var(--primary);
+  }
+  input[type="range"]{
+    width:100%;
+    accent-color:var(--primary);
+    height:6px;
+  }
+
+  /* Form */
+  form{ display:contents; }
+  .field{ display:flex; flex-direction:column; gap:6px; margin-bottom:16px; }
+  .field-row{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  label.f-label{
+    font-size:11px; font-weight:700; letter-spacing:0.05em;
+    text-transform:uppercase; color:var(--ink-soft);
+  }
+  label.f-label .req{ color:var(--primary); }
+
+  input[type="text"], textarea{
+    font-family:inherit;
+    font-size:15px;
+    color:var(--ink);
+    background:var(--card-dim);
+    border:2.5px solid var(--border);
+    border-radius:14px;
+    padding:11px 14px;
+    outline:none;
+    transition:box-shadow .12s ease;
+  }
+  input[type="text"]:focus, textarea:focus{ box-shadow:3px 3px 0 var(--border); }
+  input:focus-visible, textarea:focus-visible, button:focus-visible{
+    outline:2.5px solid var(--good);
+    outline-offset:2px;
+  }
+  textarea{ resize:vertical; min-height:84px; line-height:1.5; }
+
+  .signature-field input{
+    font-family:"Segoe Script","Bradley Hand","Snell Roundhand", cursive;
+    font-size:23px;
+    color:var(--primary);
+    background:transparent;
+    border:none;
+    border-bottom:2.5px solid var(--border);
+    border-radius:0;
+    padding:6px 2px;
+  }
+
+  .form-card{ padding:20px; }
+
+  .submit-wrap{ display:flex; flex-direction:column; align-items:center; gap:10px; padding-top:6px; }
+  .btn-submit{
+    width:100%;
+    font-family:"Lilita One", "Arial Black", sans-serif;
+    font-size:17px;
+    letter-spacing:0.01em;
+    color:var(--ground);
+    background:var(--secondary);
+    border:3px solid var(--border);
+    border-radius:999px;
+    padding:16px;
+    cursor:pointer;
+    box-shadow:6px 6px 0 var(--border);
+    transition:transform .1s ease, box-shadow .1s ease;
+  }
+  .btn-submit:active{ transform:translate(3px,3px); box-shadow:3px 3px 0 var(--border); }
+  .hint{ font-size:12px; color:color-mix(in srgb, var(--card) 65%, transparent); text-align:center; min-height:16px; }
+  .hint.error{ color:var(--secondary); font-weight:700; }
+
+  @media (prefers-reduced-motion: no-preference){
+    .form-card.shake{ animation:shake .32s ease; }
+  }
+
+  /* Match panel */
+  .match-panel{
+    display:none;
+    padding:30px 24px 26px;
+    text-align:center;
+    background:linear-gradient(180deg, color-mix(in srgb, var(--primary) 14%, var(--card)), var(--card));
+  }
+  .match-panel.show{ display:block; }
+  @media (prefers-reduced-motion: no-preference){
+    .match-panel.show{ animation:rise .45s cubic-bezier(.2,1.2,.4,1) both; }
+  }
+  @keyframes rise{
+    from{ opacity:0; transform:translateY(14px) scale(0.97); }
+    to{ opacity:1; transform:translateY(0) scale(1); }
+  }
+  .match-avatars{ display:flex; justify-content:center; align-items:center; margin-bottom:14px; }
+  .match-avatars img{
+    width:76px; height:76px; border-radius:50%;
+    object-fit:cover; border:3px solid var(--border);
+    box-shadow:3px 3px 0 var(--border);
+  }
+  .match-avatars .you{
+    width:76px; height:76px; border-radius:50%;
+    border:3px solid var(--border);
+    background:var(--card-dim);
+    display:flex; align-items:center; justify-content:center;
+    font-family:"Lilita One", sans-serif;
+    font-size:26px;
+    color:var(--ink-soft);
+    box-shadow:3px 3px 0 var(--border);
+  }
+  .match-avatars .heart{
+    width:34px; height:34px;
+    background:var(--primary);
+    border:2.5px solid var(--border);
+    border-radius:50%;
+    margin:0 -12px;
+    z-index:2;
+    display:flex; align-items:center; justify-content:center;
+    color:var(--card);
+    font-size:15px;
+    font-weight:800;
+  }
+  .match-title{
+    font-family:"Lilita One", "Arial Black", sans-serif;
+    font-size:clamp(28px, 9vw, 36px);
+    color:var(--primary);
+    margin:0 0 8px;
+    text-wrap:balance;
+  }
+  .match-panel p{ margin:0 0 6px; font-size:14.5px; max-width:40ch; margin-left:auto; margin-right:auto; }
+  .match-meta{
+    font-family:"JetBrains Mono", ui-monospace, monospace;
+    font-size:11px;
+    color:var(--ink-soft);
+    margin-top:14px;
+  }
+
+  footer.note{
+    text-align:center;
+    font-size:11.5px;
+    color:color-mix(in srgb, var(--card) 45%, transparent);
+    max-width:400px;
+    margin:6px auto 0;
+    padding:0 16px;
+  }
+
+  canvas#confetti{ position:fixed; inset:0; pointer-events:none; z-index:50; }
+
+  @media (max-width:380px){
+    .field-row{ grid-template-columns:1fr; }
+    .gallery{ grid-template-columns:1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <div class="app">
+
+    <div class="topbar">
+      <span class="brand">Cyrus's Girlfriend Application</span>
+      <span class="live-pill">1 opening</span>
+    </div>
+
+    <div class="nb-card hero-card">
+      <div class="hero-photo-wrap">
+        <img src="images/4dc3f1389fab5329ddd02d3513553ad7.jpg" alt="Cyrus reclining dramatically on a ledge in front of the Colosseum at night" loading="lazy">
+        <div class="photo-dots">
+          <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+        </div>
+        <div class="hero-scrim"></div>
+        <div class="verified">Self-Verified &#10003;</div>
+        <div class="hero-text">
+          <h1 class="hero-name">Cyrus, 6'0"</h1>
+          <div class="hero-chips">
+            <span>Christian</span>
+            <span>Goofy: Maximum</span>
+            <span>Never Had a Girlfriend</span>
+            <span>Wants kids</span>
+          </div>
+        </div>
+      </div>
+      <div class="action-row">
+        <button type="button" class="btn btn-nope" id="nope-btn">Nope</button>
+        <span class="nope-toast" id="nope-toast">Wrong button. Try "Apply" &#8594;</span>
+        <button type="button" class="btn btn-apply" id="apply-btn">Apply</button>
+      </div>
+    </div>
+
+    <div class="trust">
+      <p class="label">As seen on</p>
+      <p class="items">My mom's fridge &#8226; A group chat that will not let this go &#8226; One (1) deeply awkward family reunion</p>
+    </div>
+
+    <div class="section">
+      <p class="eyebrow">Part 1 &#8226; The Basics</p>
+      <h2>A few things about him</h2>
+      <div class="prompts">
+        <div class="nb-card prompt">
+          <span class="tag">My faith</span>
+          <p>I pray about the big stuff and the small stuff, pretty much every day. It's just who I am, not something I'll ever grow out of.</p>
+        </div>
+        <div class="nb-card prompt">
+          <span class="tag">Green flags</span>
+          <p>Financially stable, hard worker, lives on my own, can play guitar and sing, genuinely never had a girlfriend &#8212; either very selective or very unqualified. You decide.</p>
+        </div>
+        <div class="nb-card prompt">
+          <span class="tag">Dating me is like</span>
+          <p>A 6am gym invite, zero homebody energy, and something new happening most weeks. There is always somewhere to be.</p>
+        </div>
+        <div class="nb-card prompt">
+          <span class="tag">I'm looking for</span>
+          <p>Someone who wants marriage and a real family, not just a few good dates. Kids especially &#8212; more than almost anything.</p>
+        </div>
+        <div class="nb-card prompt">
+          <span class="tag">Fine print</span>
+          <p>I'm a virgin, saving myself for marriage. Also pretty sure I've got a little bit of autism. If that's not for you, no hard feelings.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <p class="eyebrow">Part 2 &#8226; The Receipts</p>
+      <h2>More proof this is real</h2>
+      <div class="gallery">
+        <figure>
+          <img src="images/20780f41736303ae18ecd5b6c12386c2.jpg" alt="Cyrus flexing shirtless in a mirror" loading="lazy" style="object-position:50% 80%;">
+          <figcaption>I'm nonchalant. (Not.)</figcaption>
+        </figure>
+        <figure>
+          <img src="images/34dbc6e8894a4f91cff4c5a237bd7054.webp" alt="Cyrus with a booger dripping dramatically from his nose" loading="lazy">
+          <figcaption>I'm goofy.</figcaption>
+        </figure>
+        <figure>
+          <img src="images/239d30f318b30e659e5bc29a2768f1b4.jpg" alt="Cyrus in a suit fanning out cash" loading="lazy" style="object-position:50% 10%;">
+          <figcaption>Financial stability, self-reported</figcaption>
+        </figure>
+        <figure>
+          <img src="images/a0cb6d1d07469d950e44dc71568ee052.jpg" alt="Cyrus making a face in a car" loading="lazy">
+          <figcaption>Car selfie.</figcaption>
+        </figure>
+        <figure>
+          <img src="images/6fb9ba7044a74c961abf861ab886d646.jpg" alt="Cyrus in a tank top flexing in a gym mirror, full body" loading="lazy" style="object-position:50% 25%;">
+          <figcaption>I workout.</figcaption>
+        </figure>
+        <figure>
+          <img src="images/bcaa0ee980271faa4f0d3804521e0ba9.webp" alt="Cyrus praying with friends on the street at night, wearing a Praise The Lord shirt" loading="lazy">
+          <figcaption>Jesus is my everything.</figcaption>
+        </figure>
+      </div>
+    </div>
+
+    <form id="app-form">
+      <div class="section">
+        <p class="eyebrow">Part 3 &#8226; Compatibility Check</p>
+        <h2>Tap what applies to you</h2>
+        <div class="nb-card chip-grid">
+          <label><input type="checkbox" name="compat"> Faith matters to me too</label>
+          <label><input type="checkbox" name="compat"> Fine with surprise guitar sets</label>
+          <label><input type="checkbox" name="compat"> Want kids someday</label>
+          <label><input type="checkbox" name="compat"> High tolerance for goofiness</label>
+          <label><input type="checkbox" name="compat"> Love (or am open to) travel</label>
+          <label><input type="checkbox" name="compat"> Patient with people learning as they go</label>
+          <label><input type="checkbox" name="compat"> Close with my own family</label>
+          <label><input type="checkbox" name="compat"> Read, or wish I read more</label>
+          <label><input type="checkbox" name="compat"> Unbothered by boogers</label>
+        </div>
+      </div>
+
+      <div class="nb-card">
+        <div class="sliders">
+          <div class="slider-field">
+            <div class="top"><span>Goofiness tolerance</span><span id="dadjoke-val">7 / 10</span></div>
+            <input type="range" min="1" max="10" value="7" id="dadjoke" oninput="document.getElementById('dadjoke-val').textContent=this.value+' / 10'">
+          </div>
+          <div class="slider-field">
+            <div class="top"><span>Adventure appetite</span><span id="adventure-val">6 / 10</span></div>
+            <input type="range" min="1" max="10" value="6" id="adventure" oninput="document.getElementById('adventure-val').textContent=this.value+' / 10'">
+          </div>
+          <div class="slider-field">
+            <div class="top"><span>Excitement for a future family</span><span id="family-val">8 / 10</span></div>
+            <input type="range" min="1" max="10" value="8" id="family" oninput="document.getElementById('family-val').textContent=this.value+' / 10'">
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <p class="eyebrow">Part 4 &#8226; The Actual Application</p>
+        <h2>Okay, now for real</h2>
+        <div class="nb-card form-card" id="form-card">
+          <div class="field-row">
+            <div class="field">
+              <label class="f-label" for="fullname">Full name <span class="req">*</span></label>
+              <input type="text" id="fullname" name="fullname" autocomplete="off" required>
+            </div>
+            <div class="field">
+              <label class="f-label" for="nickname">Nickname</label>
+              <input type="text" id="nickname" name="nickname" autocomplete="off">
+            </div>
+          </div>
+          <div class="field">
+            <label class="f-label" for="contact">Best way to reach you</label>
+            <input type="text" id="contact" name="contact" autocomplete="off" placeholder="Phone, text, carrier pigeon&hellip;">
+          </div>
+          <div class="field">
+            <label class="f-label" for="coverletter">Why are you applying?</label>
+            <textarea id="coverletter" name="coverletter" placeholder="Keep it honest. Booger jokes are fair game."></textarea>
+          </div>
+          <div class="field-row">
+            <div class="field signature-field">
+              <label class="f-label" for="signature">Sign here <span class="req">*</span></label>
+              <input type="text" id="signature" name="signature" autocomplete="off" required placeholder="Type your name">
+            </div>
+            <div class="field">
+              <label class="f-label" for="sigdate">Date</label>
+              <input type="text" id="sigdate" name="sigdate" readonly>
+            </div>
+          </div>
+
+          <div class="submit-wrap">
+            <button type="submit" class="btn-submit">Submit &amp; Find Out</button>
+            <p class="hint" id="hint">Fields marked <span style="color:var(--primary)">*</span> are required.</p>
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <div class="nb-card match-panel" id="match">
+      <div class="match-avatars">
+        <img src="images/4dc3f1389fab5329ddd02d3513553ad7.jpg" alt="Cyrus">
+        <div class="heart">&#9829;</div>
+        <div class="you" id="you-initial">?</div>
+      </div>
+      <p class="match-title">It's a Match!</p>
+      <p id="match-line">You and Cyrus have both applied. That's how this works, apparently.</p>
+      <p>He'll be in touch &#8212; possibly with a guitar playing, whether you asked for it or not.</p>
+      <p class="match-meta" id="match-meta"></p>
+    </div>
+
+    <footer class="note">This site is entirely for fun &mdash; nothing is collected, stored, or sent anywhere. It all happens right here in your browser.</footer>
+
+  </div>
+</div>
+
+<canvas id="confetti"></canvas>
+
+<script>
+  (function(){
+    var dateField = document.getElementById('sigdate');
+    var today = new Date();
+    dateField.value = today.toLocaleDateString(undefined, { year:'numeric', month:'short', day:'numeric' });
+
+    document.getElementById('apply-btn').addEventListener('click', function(){
+      document.getElementById('form-card').scrollIntoView({ behavior:'smooth', block:'center' });
+      document.getElementById('fullname').focus({ preventScroll:true });
+    });
+
+    var nopeBtn = document.getElementById('nope-btn');
+    var nopeToast = document.getElementById('nope-toast');
+    var nopeTimer;
+    nopeBtn.addEventListener('click', function(){
+      nopeBtn.classList.remove('shake');
+      void nopeBtn.offsetWidth;
+      nopeBtn.classList.add('shake');
+      nopeToast.classList.add('show');
+      clearTimeout(nopeTimer);
+      nopeTimer = setTimeout(function(){ nopeToast.classList.remove('show'); }, 1800);
+    });
+
+    var form = document.getElementById('app-form');
+    var formCard = document.getElementById('form-card');
+    var hint = document.getElementById('hint');
+    var match = document.getElementById('match');
+    var matchLine = document.getElementById('match-line');
+    var matchMeta = document.getElementById('match-meta');
+    var youInitial = document.getElementById('you-initial');
+    var submitted = false;
+
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      var name = document.getElementById('fullname').value.trim();
+      var sig = document.getElementById('signature').value.trim();
+
+      if(!name || !sig){
+        hint.textContent = 'Please enter your full name and signature before submitting.';
+        hint.classList.add('error');
+        formCard.classList.remove('shake');
+        void formCard.offsetWidth;
+        formCard.classList.add('shake');
+        return;
+      }
+
+      hint.classList.remove('error');
+      hint.textContent = 'Application received.';
+
+      youInitial.textContent = name.charAt(0).toUpperCase();
+      matchLine.innerHTML = 'You and <strong>' + escapeHtml(sig) + '</strong> have both applied. That’s how this works, apparently.';
+      matchMeta.textContent = 'Matched on ' + dateField.value;
+      match.classList.add('show');
+      match.scrollIntoView({ behavior:'smooth', block:'center' });
+
+      if(!submitted){
+        submitted = true;
+        var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if(!reduce) launchConfetti();
+      }
+    });
+
+    function escapeHtml(str){
+      var d = document.createElement('div');
+      d.textContent = str;
+      return d.innerHTML;
+    }
+
+    function launchConfetti(){
+      var canvas = document.getElementById('confetti');
+      var ctx = canvas.getContext('2d');
+      var dpr = window.devicePixelRatio || 1;
+      canvas.width = window.innerWidth * dpr;
+      canvas.height = window.innerHeight * dpr;
+      canvas.style.width = window.innerWidth + 'px';
+      canvas.style.height = window.innerHeight + 'px';
+      ctx.scale(dpr, dpr);
+
+      var colors = ['#FF4D6D', '#FFC93C', '#00C48C', '#FFF7EC'];
+      var particles = [];
+      for(var i=0;i<80;i++){
+        particles.push({
+          x: Math.random() * window.innerWidth,
+          y: -20 - Math.random() * window.innerHeight * 0.4,
+          size: 5 + Math.random() * 7,
+          speedY: 1.6 + Math.random() * 2.6,
+          speedX: (Math.random() - 0.5) * 1.8,
+          rotation: Math.random() * Math.PI * 2,
+          spin: (Math.random() - 0.5) * 0.22,
+          color: colors[Math.floor(Math.random() * colors.length)]
+        });
+      }
+
+      var start = performance.now();
+      var duration = 3200;
+
+      function drawHeart(x, y, size, rotation, color, alpha){
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate(rotation);
+        ctx.globalAlpha = alpha;
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        var s = size / 20;
+        ctx.moveTo(0, 6*s);
+        ctx.bezierCurveTo(-9*s, -2*s, -9*s, -10*s, 0, -6*s);
+        ctx.bezierCurveTo(9*s, -10*s, 9*s, -2*s, 0, 6*s);
+        ctx.fill();
+        ctx.restore();
+      }
+
+      function frame(now){
+        var elapsed = now - start;
+        ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+        particles.forEach(function(p){
+          p.x += p.speedX;
+          p.y += p.speedY;
+          p.rotation += p.spin;
+          var alpha = elapsed < duration - 600 ? 1 : Math.max(0, 1 - (elapsed - (duration - 600)) / 600);
+          drawHeart(p.x, p.y, p.size, p.rotation, p.color, alpha);
+        });
+        if(elapsed < duration){
+          requestAnimationFrame(frame);
+        } else {
+          ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+        }
+      }
+      requestAnimationFrame(frame);
+    }
+  })();
+</script>
+</body>
+</html>

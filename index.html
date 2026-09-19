@@ -682,12 +682,12 @@
         <div class="you" id="you-initial">?</div>
       </div>
       <p class="match-title">It's a Match!</p>
-      <p id="match-line">You and Cyrus have both applied. That's how this works, apparently.</p>
-      <p>He'll be in touch &#8212; possibly with a guitar playing, whether you asked for it or not.</p>
+      <p id="match-line">Your application has been sent to Cyrus.</p>
+      <p>He'll read it over and reach out if it feels like a match.</p>
       <p class="match-meta" id="match-meta"></p>
     </div>
 
-    <footer class="note">This site is entirely for fun &mdash; nothing is collected, stored, or sent anywhere. It all happens right here in your browser.</footer>
+    <footer class="note">This site is entirely for fun. Submitting the form below sends your answers to Cyrus by email &mdash; nothing else is collected or stored anywhere.</footer>
 
   </div>
 </div>
@@ -758,8 +758,8 @@
       });
 
       youInitial.textContent = name.charAt(0).toUpperCase();
-      matchLine.innerHTML = 'You and <strong>' + escapeHtml(sig) + '</strong> have both applied. That’s how this works, apparently.';
-      matchMeta.textContent = 'Matched on ' + dateField.value;
+      matchLine.innerHTML = 'Thanks, <strong>' + escapeHtml(sig) + '</strong> \u2014 your application has been sent to Cyrus.';
+      matchMeta.textContent = 'Submitted on ' + dateField.value;
       match.classList.add('show');
       match.scrollIntoView({ behavior:'smooth', block:'center' });
 
